@@ -8,6 +8,7 @@ widthImg = 700
 heightImg = 700
 questions = 5
 choices = 5
+ans = [1,2,0,1,4]
 ###########################################
 img = cv2.imread(path)
 #imgContours = img.copy()  don't make a copy before resizing
@@ -115,7 +116,19 @@ if biggestContour.size !=0 and gradePoints.size != 0:
         myIndex.append(myindexVal[0][0])
     print(myIndex)
 
+#comparing answer key and choices made
+    grading = []
+    for x in range(0,questions):
+        if ans[x] == myIndex[x]:
+            grading.append(1)
+        else: grading.append(0)
+    #print(grading)
 
+    #final grade percentage
+
+    score = (sum(grading)/questions) * 100 
+
+    
 
 
 
