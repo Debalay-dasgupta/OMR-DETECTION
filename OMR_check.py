@@ -15,3 +15,5 @@ img = cv2.resize(img,(widthImg,heightImg))
 cv2.imshow("Answer Script",img)
 
 cv2.waitKey(0)
+
+###check changes
