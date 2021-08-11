@@ -6,6 +6,8 @@ import utlis
 path = "1.jpg"
 widthImg = 700
 heightImg = 700
+questions = 5
+choices = 5
 ###########################################
 img = cv2.imread(path)
 #imgContours = img.copy()  don't make a copy before resizing
@@ -85,7 +87,37 @@ if biggestContour.size !=0 and gradePoints.size != 0:
     boxes = utlis.splitBoxes(imgThresh)
     #cv2.imshow("test",boxes[2])
 
-    #to check whether marked or not no. of white pixels
+    #to check whether marked or not no. of white pixels to get idea of threshold
+    # 1 is marked and 2 is not so we can get idea of threshold of no. of white pixels
+    print(cv2.countNonZero(boxes[1]),cv2.countNonZero(boxes[2]))
+
+    #came ot to be 10267  and 2689 hence can store now in 5x5 here
+
+    myPixelVal = np.zeros((questions,choices))
+    countC = 0
+    countR =0
+    
+    for image in boxes:
+
+        if(countC==choices):countR +=1;countC =0
+        totalPixels = cv2.countNonZero(image)
+        myPixelVal[countR][countC] = totalPixels
+        countC +=1
+    #print(myPixelVal)
+
+    #store max value in each row as 1
+    myIndex = []
+    for x in range(0,questions):
+        arr = myPixelVal[x]
+        #print("arr",arr) can see all rows point to arr
+        myindexVal = np.where(arr==np.amax(arr))
+        #print(myIndexVal[0])
+        myIndex.append(myindexVal[0][0])
+    print(myIndex)
+
+
+
+
 
 
 
