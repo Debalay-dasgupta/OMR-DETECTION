@@ -77,16 +77,24 @@ if biggestContour.size !=0 and gradePoints.size != 0:
 
     cv2.imshow("grades",imgGradeDisplay)
 
+    #apply threshold -> marked bubbles darker so..
+    imgWarpGray = cv2.cvtColor(imgwarpColored,cv2.COLOR_BGR2GRAY)
+    #continuosly check for threshold
+    imgThresh = cv2.threshold(imgWarpGray,170,255,cv2.THRESH_BINARY_INV)[1]#dstination to zero..black to white
 
-    
+    boxes = utlis.splitBoxes(imgThresh)
+    #cv2.imshow("test",boxes[2])
+
+    #to check whether marked or not no. of white pixels
+
 
 
 #stacking all images and display
 imgBlank = np.zeros_like(img)
 
-imageArray = ([img,imgGray,imgBlur,imgCanny,imgBlank],[imgContours,imgBiggestContours,imgGradePoints,imgwarpColored,imgBlank])
+imageArray = ([img,imgGray,imgBlur,imgCanny,imgBlank],[imgContours,imgBiggestContours,imgGradePoints,imgwarpColored,imgThresh])
 
-imagStacked = utlis.stackImages(imageArray,0.5)#scale given, labels not given
+imagStacked = utlis.stackImages(imageArray,0.4)#scale given, labels not given
 
 cv2.imshow("Stacked Images",imagStacked)
 
