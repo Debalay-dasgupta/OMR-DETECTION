@@ -43,25 +43,48 @@ biggestContour = rectCon[0]
 #corner points 
 #where mcq present
 biggestContour = utlis.getCornerPoints(rectCon[0])
-print(biggestContour)
+#print(biggestContour)
+print(biggestContour.shape) #we got shape (4,1,2) so make changes in reorder function
 
 #where grade box present probably second largest
 gradePoints = utlis.getCornerPoints(rectCon[1])
-print(gradePoints)
+#print(gradePoints)
+print(gradePoints.shape)
 
 #to check whether desired rectangle is derived
 
 if biggestContour.size !=0 and gradePoints.size != 0:
+    
     cv2.drawContours(imgBiggestContours,biggestContour,-1,(0,255,0),20)
     cv2.drawContours(imgGradePoints,gradePoints,-1,(255,0,0),20) #more thick
     
+    biggestContour = utlis.reorder(biggestContour) #points reordering for warp
+    gradePoints = utlis.reorder(gradePoints)
 
+    #warp perspective, get points,then transformational matrix
+    pt1 = np.float32(biggestContour)
+    pt2 = np.float32([[0,0],[widthImg,0],[0,heightImg],[widthImg,heightImg]])
+    matrix = cv2.getPerspectiveTransform(pt1,pt2) #source,destination
+
+    imgwarpColored = cv2.warpPerspective(img,matrix,(widthImg,heightImg)) #src,dest,dsize
+
+    #warp for gradePoints, we can take any width and ht
+    ptG1 = np.float32(gradePoints)
+    ptG2 = np.float32([[0,0],[325,0],[0,150],[325,150]])
+    matrixG = cv2.getPerspectiveTransform(ptG1,ptG2) #source,destination
+
+    imgGradeDisplay = cv2.warpPerspective(img,matrixG,(325,150)) #src,dest,dsize
+
+    cv2.imshow("grades",imgGradeDisplay)
+
+
+    
 
 
 #stacking all images and display
 imgBlank = np.zeros_like(img)
 
-imageArray = ([img,imgGray,imgBlur,imgCanny],[imgContours,imgBiggestContours,imgGradePoints,imgBlank])
+imageArray = ([img,imgGray,imgBlur,imgCanny,imgBlank],[imgContours,imgBiggestContours,imgGradePoints,imgwarpColored,imgBlank])
 
 imagStacked = utlis.stackImages(imageArray,0.5)#scale given, labels not given
 
